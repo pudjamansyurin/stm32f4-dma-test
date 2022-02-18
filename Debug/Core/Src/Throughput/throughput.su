@@ -1,0 +1,8 @@
+throughput.c:35:19:Throughput_Init	8	static
+throughput.c:49:19:Throughput_Test	16	static
+throughput.c:73:17:_average	16	static
+throughput.c:79:26:_test	24	static
+throughput.c:107:36:_tester_memcpy	8	static
+throughput.c:112:36:_tester_dma	8	static
+throughput.c:119:13:TransferComplete	16	static
+throughput.c:124:13:TransferError	16	static
