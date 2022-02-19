@@ -30,7 +30,7 @@ void TS_DMA_Transfer(void *DstAddr, void *SrcAddr, uint16_t Size)
   while (!transferComplete && !transferError);
 }
 
-void TS_DMA_ConvertSize(uint16_t *Size)
+void TS_DMA_TansformSize(uint16_t *Size)
 {
   /* Reset flags */
   transferComplete = 0;

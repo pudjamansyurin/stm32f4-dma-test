@@ -4,8 +4,8 @@
  *  Created on: Feb 18, 2022
  *      Author: pujak
  */
-#include "stm32f4xx-dwt-counter-module/dwt_counter.h"
-#include "stm32f4xx-hal-led-module/led.h"
+#include "stm32f4xx-hal-dwt-counter/dwt_counter.h"
+#include "stm32f4xx-hal-led/led.h"
 #include "./throughput.h"
 #include "./tester_dma.h"
 #include <string.h>
@@ -25,7 +25,7 @@ uint8_t SRAM1_ADDR[BUF_SIZE];
 /* Private function declarations */
 static void _register(enum TEST_NAME ts_name,
                       void (*transfer)(void*, void*, uint16_t),
-                      void (*conver_size)(uint16_t*),
+                      void (*transform)(uint16_t*),
                       void (*configure)(void));
 static void _register_dma(enum TEST_NAME ts_name, void (*configure)(void));
 static HAL_StatusTypeDef _test(struct Tester *ts);
@@ -96,10 +96,7 @@ HAL_StatusTypeDef Throughput_Test(void)
     }
 
     /* Indicators */
-    LED_Write(&hled, 1);
-    HAL_Delay(500);
-    LED_Write(&hled, 0);
-    HAL_Delay(50);
+    LED_Blink(&hled, 500, 50);
   }
 
   return (HAL_OK);
@@ -114,9 +111,9 @@ static HAL_StatusTypeDef _test(struct Tester *ts)
   /* Prepare data */
   memset(SRAM2_ADDR, 0x00, BUF_SIZE);
 
-  /* Convert size */
-  if (ts->convert_size != NULL) {
-    ts->convert_size(&size);
+  /* Transform size */
+  if (ts->transform != NULL) {
+    ts->transform(&size);
   }
 
   /* Transfer data */
@@ -159,20 +156,20 @@ static inline void _flush(struct Tester *ts)
 
 static void _register(enum TEST_NAME ts_name,
                       void (*transfer)(void*, void*, uint16_t),
-                      void (*conver_size)(uint16_t*),
+                      void (*transform)(uint16_t*),
                       void (*configure)(void))
 {
   struct Tester *ts = &Testers[ts_name];
 
   _flush(ts);
   ts->transfer = transfer;
-  ts->convert_size = conver_size;
+  ts->transform = transform;
   ts->configure = configure;
 }
 
 static void _register_dma(enum TEST_NAME ts_name, void (*configure)(void))
 {
-  _register(ts_name, TS_DMA_Transfer, TS_DMA_ConvertSize, configure);
+  _register(ts_name, TS_DMA_Transfer, TS_DMA_TansformSize, configure);
 }
 
 __STATIC_FORCEINLINE void _memcpy_transfer(void *DstAddr,

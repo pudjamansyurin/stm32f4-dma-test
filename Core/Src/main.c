@@ -23,7 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "stm32f4xx-hal-led-module/led.h"
+#include "stm32f4xx-hal-led/led.h"
 #include "Throughput/throughput.h"
 /* USER CODE END Includes */
 
@@ -97,10 +97,7 @@ int main(void)
   Throughput_Test();
 
   while (1) {
-    LED_Write(&hled, 1);
-    HAL_Delay(50);
-    LED_Write(&hled, 0);
-    HAL_Delay(50);
+    LED_Blink(&hled, 50, 50);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
