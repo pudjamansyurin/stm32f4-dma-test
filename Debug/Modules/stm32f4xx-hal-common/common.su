@@ -1,4 +1,0 @@
-common.c:15:19:CMN_PinGetNumber	24	static
-common.c:36:19:CMN_PinGetIrqNumber	24	static
-common.c:65:6:CMN_PortEnableClock	48	static
-common.c:92:6:CMN_PortDisableClock	16	static

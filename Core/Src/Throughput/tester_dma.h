@@ -13,7 +13,7 @@
 /* Public function declarations */
 void TS_DMA_Init(void);
 void TS_DMA_Transfer(void *DstAddr, void *SrcAddr, uint16_t Size);
-void TS_DMA_ResetFlags(void);
+void TS_DMA_ConvertSize(uint16_t *Size);
 
 void TS_DMA_byte(void);
 void TS_DMA_halfword(void);

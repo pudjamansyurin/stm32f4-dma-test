@@ -12,7 +12,7 @@
 
 /* Private macros */
 #define SRAM2_ADDR          ((void*) (0x2001C000))
-#define BUF_SIZE            (1802)
+#define BUF_SIZE            (1804)
 #define ITERATION_CNT       (10000)
 
 /* External variables */
@@ -23,9 +23,11 @@ struct Tester Testers[TEST_CNT] = { 0 };
 uint8_t SRAM1_ADDR[BUF_SIZE];
 
 /* Private function declarations */
-static struct Tester* _register_tester(enum TEST_NAME ts_name,
-                                       void (*transfer)(void*, void*, uint16_t),
-                                       void (*configure)(void));
+static void _register(enum TEST_NAME ts_name,
+                      void (*transfer)(void*, void*, uint16_t),
+                      void (*conver_size)(uint16_t*),
+                      void (*configure)(void));
+static void _register_dma(enum TEST_NAME ts_name, void (*configure)(void));
 static HAL_StatusTypeDef _test(struct Tester *ts);
 static inline void _calculate(struct Tester *ts);
 static inline void _flush(struct Tester *ts);
@@ -37,48 +39,37 @@ __STATIC_FORCEINLINE void _memcpy_transfer(void *DstAddr,
 HAL_StatusTypeDef Throughput_Init(void)
 {
   TS_DMA_Init();
+  memset(SRAM1_ADDR, 0x77, BUF_SIZE);
 
   /* Initiate testers */
-  _register_tester(TEST_MEMCPY, _memcpy_transfer, NULL);
+  _register(TEST_MEMCPY, _memcpy_transfer, NULL, NULL);
 
-  _register_tester(TEST_DMA_BYTE, TS_DMA_Transfer, TS_DMA_byte);
-  _register_tester(TEST_DMA_HALFWORD, TS_DMA_Transfer, TS_DMA_halfword);
-  _register_tester(TEST_DMA_WORD, TS_DMA_Transfer, TS_DMA_word);
+  _register_dma(TEST_DMA_BYTE, TS_DMA_byte);
+  _register_dma(TEST_DMA_HALFWORD, TS_DMA_halfword);
+  _register_dma(TEST_DMA_WORD, TS_DMA_word);
 
-  _register_tester(TEST_DMA_BYTE_FIFO, TS_DMA_Transfer, TS_DMA_byte_fifo);
-  _register_tester(TEST_DMA_HALFWORD_FIFO,
-                   TS_DMA_Transfer,
-                   TS_DMA_halfword_fifo);
-  _register_tester(TEST_DMA_WORD_FIFO, TS_DMA_Transfer, TS_DMA_word_fifo);
+  _register_dma(TEST_DMA_BYTE_FIFO, TS_DMA_byte_fifo);
+  _register_dma(TEST_DMA_HALFWORD_FIFO, TS_DMA_halfword_fifo);
+  _register_dma(TEST_DMA_WORD_FIFO, TS_DMA_word_fifo);
 
-  _register_tester(TEST_DMA_BYTE_FIFO_INC4,
-                   TS_DMA_Transfer,
-                   TS_DMA_byte_fifo_inc4);
-  _register_tester(TEST_DMA_BYTE_FIFO_INC8,
-                   TS_DMA_Transfer,
-                   TS_DMA_byte_fifo_inc8);
-  _register_tester(TEST_DMA_BYTE_FIFO_INC16,
-                   TS_DMA_Transfer,
-                   TS_DMA_byte_fifo_inc16);
+  _register_dma(TEST_DMA_BYTE_FIFO_INC4, TS_DMA_byte_fifo_inc4);
+  _register_dma(TEST_DMA_BYTE_FIFO_INC8, TS_DMA_byte_fifo_inc8);
+  _register_dma(TEST_DMA_BYTE_FIFO_INC16, TS_DMA_byte_fifo_inc16);
 
-  _register_tester(TEST_DMA_HALFWORD_FIFO_INC4,
-                   TS_DMA_Transfer,
-                   TS_DMA_halfword_fifo_inc4);
-  _register_tester(TEST_DMA_HALFWORD_FIFO_INC8,
-                   TS_DMA_Transfer,
-                   TS_DMA_halfword_fifo_inc8);
+  _register_dma(TEST_DMA_HALFWORD_FIFO_INC4, TS_DMA_halfword_fifo_inc4);
+  _register_dma(TEST_DMA_HALFWORD_FIFO_INC8, TS_DMA_halfword_fifo_inc8);
 
-  _register_tester(TEST_DMA_WORD_FIFO_INC4,
-                   TS_DMA_Transfer,
-                   TS_DMA_word_fifo_inc4);
+  _register_dma(TEST_DMA_WORD_FIFO_INC4, TS_DMA_word_fifo_inc4);
 
   return (HAL_OK);
 }
 
 HAL_StatusTypeDef Throughput_Test(void)
 {
+  HAL_StatusTypeDef status;
   struct Tester *ts;
-  uint16_t i, j;
+  uint8_t i;
+  uint16_t j;
 
   for (i = 0; i < TEST_CNT; i++) {
     ts = &Testers[i];
@@ -96,9 +87,13 @@ HAL_StatusTypeDef Throughput_Test(void)
     /* Test routines */
     _flush(ts);
     for (j = 0; j < ITERATION_CNT; j++) {
-      _test(ts);
+      status = _test(ts);
     }
-    _calculate(ts);
+
+    /* Summarize result */
+    if (status == HAL_OK) {
+      _calculate(ts);
+    }
 
     /* Indicators */
     LED_Write(&hled, 1);
@@ -113,17 +108,20 @@ HAL_StatusTypeDef Throughput_Test(void)
 /* Private function definitions */
 static HAL_StatusTypeDef _test(struct Tester *ts)
 {
+  uint16_t size = BUF_SIZE;
   uint32_t cycles;
 
   /* Prepare data */
-  memset(SRAM1_ADDR, 0x55, BUF_SIZE);
   memset(SRAM2_ADDR, 0x00, BUF_SIZE);
 
-  TS_DMA_ResetFlags();
+  /* Convert size */
+  if (ts->convert_size != NULL) {
+    ts->convert_size(&size);
+  }
 
   /* Transfer data */
   DWT_Init();
-  ts->transfer(SRAM2_ADDR, SRAM1_ADDR, BUF_SIZE);
+  ts->transfer(SRAM2_ADDR, SRAM1_ADDR, size);
   cycles = DWT_GetCounter();
   DWT_DeInit();
 
@@ -139,10 +137,10 @@ static HAL_StatusTypeDef _test(struct Tester *ts)
 
 static inline void _calculate(struct Tester *ts)
 {
-  uint32_t core_clock = HAL_RCC_GetHCLKFreq();
+  uint32_t hclock_Mhz = HAL_RCC_GetHCLKFreq() / 1000000;
 
   ts->cycles = ts->cycle_total / ts->iteration;
-  ts->duration_us = (float) ts->cycles / (core_clock / 1000000);
+  ts->duration_us = (float) ts->cycles / hclock_Mhz;
   ts->kfps = 1000.0f / ts->duration_us;
   ts->byte_cycles = (float) ts->cycles / BUF_SIZE;
   ts->byte_duration_ns = ts->duration_us * 1000.0f / BUF_SIZE;
@@ -159,17 +157,22 @@ static inline void _flush(struct Tester *ts)
   ts->byte_duration_ns = 0.0f;
 }
 
-static struct Tester* _register_tester(enum TEST_NAME ts_name,
-                                       void (*transfer)(void*, void*, uint16_t),
-                                       void (*configure)(void))
+static void _register(enum TEST_NAME ts_name,
+                      void (*transfer)(void*, void*, uint16_t),
+                      void (*conver_size)(uint16_t*),
+                      void (*configure)(void))
 {
   struct Tester *ts = &Testers[ts_name];
 
   _flush(ts);
   ts->transfer = transfer;
+  ts->convert_size = conver_size;
   ts->configure = configure;
+}
 
-  return (ts);
+static void _register_dma(enum TEST_NAME ts_name, void (*configure)(void))
+{
+  _register(ts_name, TS_DMA_Transfer, TS_DMA_ConvertSize, configure);
 }
 
 __STATIC_FORCEINLINE void _memcpy_transfer(void *DstAddr,

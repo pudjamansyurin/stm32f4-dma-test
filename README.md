@@ -6,7 +6,7 @@ To demonstrate DMA FIFO and Burst mode combination performance based on the tabl
 - System clock (HCLK) is 180MHz.
 - Source address SRAM1.
 - Destination address SRAM2.
-- Data size 1802 Bytes.
+- Data size 1804 Bytes.
 -	DMA FIFO size is 4 words (16 Bytes).
 -	Process is iterated over 10000 times to get average result.
 -	No other peripherals or task is running, except for copy process.

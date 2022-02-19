@@ -30,10 +30,18 @@ void TS_DMA_Transfer(void *DstAddr, void *SrcAddr, uint16_t Size)
   while (!transferComplete && !transferError);
 }
 
-void TS_DMA_ResetFlags(void)
+void TS_DMA_ConvertSize(uint16_t *Size)
 {
+  /* Reset flags */
   transferComplete = 0;
   transferError = 0;
+
+  /* Convert size */
+  if (hdma->Init.MemDataAlignment == DMA_PDATAALIGN_HALFWORD) {
+    *Size /= 2;
+  } else if (hdma->Init.MemDataAlignment == DMA_PDATAALIGN_WORD) {
+    *Size /= 4;
+  }
 }
 
 void TS_DMA_byte(void)

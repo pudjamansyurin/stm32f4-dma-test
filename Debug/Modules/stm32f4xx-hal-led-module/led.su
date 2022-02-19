@@ -1,6 +1,0 @@
-led.c:18:19:LED_Init	24	static
-led.c:57:19:LED_DeInit	16	static
-led.c:77:19:LED_Suspend	16	static
-led.c:100:19:LED_SetActiveMode	16	static
-led.c:115:19:LED_Write	16	static
-led.c:134:19:LED_Toggle	16	static
