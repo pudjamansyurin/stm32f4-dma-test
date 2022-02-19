@@ -10,11 +10,35 @@
 
 #include "stm32f4xx_hal.h"
 
+/* Public enums */
+enum TEST_NAME {
+  TEST_MEMCPY,
+  TEST_DMA_BYTE,
+  TEST_DMA_HALFWORD,
+  TEST_DMA_WORD,
+  TEST_DMA_BYTE_FIFO,
+  TEST_DMA_HALFWORD_FIFO,
+  TEST_DMA_WORD_FIFO,
+  TEST_DMA_BYTE_FIFO_INC4,
+  TEST_DMA_BYTE_FIFO_INC8,
+  TEST_DMA_BYTE_FIFO_INC16,
+  TEST_DMA_HALFWORD_FIFO_INC4,
+  TEST_DMA_HALFWORD_FIFO_INC8,
+  TEST_DMA_WORD_FIFO_INC4,
+  TEST_CNT,
+};
+
 /* Public types */
-struct TesterStruct {
-  uint32_t duration;
-  uint16_t count;
-  uint32_t average;
+struct Tester {
+  uint16_t iteration;
+  uint64_t cycle_total;
+  uint32_t cycles;
+  float duration_us;
+  float kfps;
+  float byte_cycles;
+  float byte_duration_ns;
+  void (*configure)(void);
+  void (*transfer)(void*, void*, uint16_t);
 };
 
 /* Public function declarations */

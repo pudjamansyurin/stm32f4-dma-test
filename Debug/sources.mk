@@ -24,4 +24,6 @@ Core/Src/Throughput \
 Core/Src \
 Core/Startup \
 Drivers/STM32F4xx_HAL_Driver/Src \
+Modules/stm32f4xx-hal-common \
+Modules/stm32f4xx-hal-led-module \
 

@@ -23,6 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "stm32f4xx-hal-led-module/led.h"
 #include "Throughput/throughput.h"
 /* USER CODE END Includes */
 
@@ -43,7 +44,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+struct Led hled;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -87,15 +88,19 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   /* USER CODE BEGIN 2 */
+  LED_Init(&hled, GPIOA, 5);
   Throughput_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   Throughput_Test();
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
 
   while (1) {
+    LED_Write(&hled, 1);
+    HAL_Delay(50);
+    LED_Write(&hled, 0);
+    HAL_Delay(50);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
