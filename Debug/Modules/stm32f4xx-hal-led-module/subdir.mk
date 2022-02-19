@@ -5,26 +5,23 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Core/Src/Throughput/tester_dma.c \
-../Core/Src/Throughput/throughput.c 
+../Modules/stm32f4xx-hal-led-module/led.c 
 
 OBJS += \
-./Core/Src/Throughput/tester_dma.o \
-./Core/Src/Throughput/throughput.o 
+./Modules/stm32f4xx-hal-led-module/led.o 
 
 C_DEPS += \
-./Core/Src/Throughput/tester_dma.d \
-./Core/Src/Throughput/throughput.d 
+./Modules/stm32f4xx-hal-led-module/led.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
-Core/Src/Throughput/%.o: ../Core/Src/Throughput/%.c Core/Src/Throughput/subdir.mk
+Modules/stm32f4xx-hal-led-module/%.o: ../Modules/stm32f4xx-hal-led-module/%.c Modules/stm32f4xx-hal-led-module/subdir.mk
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Core/Src -I../Modules -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 
-clean: clean-Core-2f-Src-2f-Throughput
+clean: clean-Modules-2f-stm32f4xx-2d-hal-2d-led-2d-module
 
-clean-Core-2f-Src-2f-Throughput:
-	-$(RM) ./Core/Src/Throughput/tester_dma.d ./Core/Src/Throughput/tester_dma.o ./Core/Src/Throughput/throughput.d ./Core/Src/Throughput/throughput.o
+clean-Modules-2f-stm32f4xx-2d-hal-2d-led-2d-module:
+	-$(RM) ./Modules/stm32f4xx-hal-led-module/led.d ./Modules/stm32f4xx-hal-led-module/led.o
 
-.PHONY: clean-Core-2f-Src-2f-Throughput
+.PHONY: clean-Modules-2f-stm32f4xx-2d-hal-2d-led-2d-module
 

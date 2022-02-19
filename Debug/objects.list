@@ -1,3 +1,4 @@
+"./Core/Src/Throughput/tester_dma.o"
 "./Core/Src/Throughput/throughput.o"
 "./Core/Src/dma.o"
 "./Core/Src/gpio.o"
@@ -23,3 +24,5 @@
 "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.o"
 "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.o"
 "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.o"
+"./Modules/stm32f4xx-hal-common/common.o"
+"./Modules/stm32f4xx-hal-led-module/led.o"
