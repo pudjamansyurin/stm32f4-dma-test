@@ -119,10 +119,10 @@ static HAL_StatusTypeDef _test(struct Tester *ts)
   }
 
   /* Transfer data */
-  DWT_Init();
+  DWT_Start();
   ts->transfer(SRAM2_ADDR, SRAM1_ADDR, size);
   cycles = DWT_GetCounter();
-  DWT_DeInit();
+  DWT_Stop();
 
   /* Compare data */
   if (memcmp(SRAM1_ADDR, SRAM2_ADDR, BUF_SIZE) == 0) {
