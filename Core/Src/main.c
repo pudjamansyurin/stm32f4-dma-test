@@ -98,6 +98,7 @@ int main(void)
 
   while (1) {
     LED_Blink(&hled, 50, 50);
+    __BKPT(0);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

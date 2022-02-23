@@ -37,6 +37,7 @@ struct Tester {
   float kfps;
   float byte_cycles;
   float byte_duration_ns;
+  float MBps;
   void (*configure)(void);
   void (*transform)(uint16_t*);
   void (*transfer)(void*, void*, uint16_t);

@@ -11,16 +11,18 @@
 #include <string.h>
 
 /* Private macros */
-#define SRAM2_ADDR          ((void*) (0x2001C000))
 #define BUF_SIZE            (1804)
 #define ITERATION_CNT       (10000)
+#define SRAM1_ADDR          ((void*) (0x2001C000))
+#define SRAM2_ADDR          ((void*) (0x2001C000 + BUF_SIZE))
 
 /* External variables */
 extern struct Led hled;
 
 /* Private variables */
 struct Tester Testers[TEST_CNT] = { 0 };
-uint8_t SRAM1_ADDR[BUF_SIZE];
+//uint8_t SRAM1_ADDR[BUF_SIZE];
+//uint8_t SRAM2_ADDR[BUF_SIZE];
 
 /* Private function declarations */
 static void _register(enum TEST_NAME ts_name,
@@ -141,6 +143,7 @@ static inline void _calculate(struct Tester *ts)
   ts->kfps = 1000.0f / ts->duration_us;
   ts->byte_cycles = (float) ts->cycles / BUF_SIZE;
   ts->byte_duration_ns = ts->duration_us * 1000.0f / BUF_SIZE;
+  ts->MBps = 1000000000.0f / ts->byte_duration_ns / 1024.0f / 1024.0f;
 }
 
 static inline void _flush(struct Tester *ts)
@@ -152,6 +155,7 @@ static inline void _flush(struct Tester *ts)
   ts->kfps = 0.0f;
   ts->byte_cycles = 0.0f;
   ts->byte_duration_ns = 0.0f;
+  ts->MBps = 0.0f;
 }
 
 static void _register(enum TEST_NAME ts_name,
