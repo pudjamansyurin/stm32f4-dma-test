@@ -1,9 +1,9 @@
-[submodule "Modules/stm32f4xx-hal-common"]
-	path = Modules/stm32f4xx-hal-common
-	url = git@github.com:pudjamansyurin/stm32f4xx-hal-common.git
 [submodule "Modules/stm32f4xx-hal-led"]
 	path = Modules/stm32f4xx-hal-led
 	url = git@github.com:pudjamansyurin/stm32f4xx-hal-led.git
 [submodule "Modules/stm32f4xx-hal-dwt-counter"]
 	path = Modules/stm32f4xx-hal-dwt-counter
 	url = git@github.com:pudjamansyurin/stm32f4xx-hal-dwt-counter.git
+[submodule "Modules/stm32f4xx-hal-util"]
+	path = Modules/stm32f4xx-hal-util
+	url = git@github.com:pudjamansyurin/stm32f4xx-hal-util.git
