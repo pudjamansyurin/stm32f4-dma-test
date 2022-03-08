@@ -12,9 +12,13 @@ To demonstrate DMA FIFO and Burst mode combination performance, a measurement is
 -	No other peripherals or task is running, except for copy process.
 -	DWT Counter is used as Instruction Cycles monitor.
 
-Throughput Test Result:
+_Throughput Test Result:_
 ![DMA Mode Combination](/Assets/dma-poc.jpg)
 
 The experiment also uses combination of transfer direction between SRAM1 and SRAM2, and the result for DMA is varied. But memcpy has stable throughput no matter source and destination address combination. It can be concluded that the SRAM throughput is limited for high transfer, hence the throughput decrease. The bellow DMA measurement is using DMA mode 13 in the table above.
 
 ![Transfer Direction Combination](/Assets/transfer-direction.jpg)
+
+
+_DMA FIFO & BURST Timing Diagram_
+![Timing Diagram](/Assets/timing-diagram.png)
