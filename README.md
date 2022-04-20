@@ -1,4 +1,4 @@
-# STM32F4 Throughput Test
+# STM32F4 DMA Test
 ## memcpy() vs various DMA configuration
 
 To demonstrate DMA FIFO and Burst mode combination performance, a measurement is done using the following system parameters :
