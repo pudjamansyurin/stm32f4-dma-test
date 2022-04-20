@@ -73,27 +73,32 @@ HAL_StatusTypeDef Throughput_Test(void)
   uint8_t i;
   uint16_t j;
 
-  for (i = 0; i < TEST_CNT; i++) {
+  for (i = 0; i < TEST_CNT; i++)
+  {
     ts = &Testers[i];
 
     /* Skip if un-registered */
-    if (ts->transfer == NULL) {
+    if (ts->transfer == NULL)
+    {
       continue;
     }
 
     /* Configure tester */
-    if (ts->configure != NULL) {
+    if (ts->configure != NULL)
+    {
       ts->configure();
     }
 
     /* Test routines */
     _flush(ts);
-    for (j = 0; j < ITERATION_CNT; j++) {
+    for (j = 0; j < ITERATION_CNT; j++)
+    {
       status = _test(ts);
     }
 
     /* Summarize result */
-    if (status == HAL_OK) {
+    if (status == HAL_OK)
+    {
       _calculate(ts);
     }
 
@@ -114,18 +119,20 @@ static HAL_StatusTypeDef _test(struct Tester *ts)
   memset(SRAM2_ADDR, 0x00, BUF_SIZE);
 
   /* Transform size */
-  if (ts->transform != NULL) {
+  if (ts->transform != NULL)
+  {
     ts->transform(&size);
   }
 
   /* Transfer data */
   DWT_Start();
   ts->transfer(SRAM2_ADDR, SRAM1_ADDR, size);
-  cycles = DWT_GetCounter();
+  cycles = DWT_GetCycle();
   DWT_Stop();
 
   /* Compare data */
-  if (memcmp(SRAM1_ADDR, SRAM2_ADDR, BUF_SIZE) == 0) {
+  if (memcmp(SRAM1_ADDR, SRAM2_ADDR, BUF_SIZE) == 0)
+  {
     ts->cycle_total += cycles;
     ts->iteration++;
 
